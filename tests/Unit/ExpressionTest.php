@@ -110,11 +110,11 @@ class ExpressionTest extends TestCase
             $this->assertCount(5, $parser->getArguments());
 
             $this->assertEquals([
-                "one" => "true",
-                "two" => "intval(\$id)",
+                "one"   => "true",
+                "two"   => "intval(\$id)",
                 "three" => "123",
-                "four" => '"string"',
-                "five" => "null",
+                "four"  => "string",
+                "five"  => "null",
             ], $parser->getArguments());
         }
     }
@@ -194,11 +194,11 @@ class ExpressionTest extends TestCase
             $this->assertCount(5, $parser->getArguments());
 
             $this->assertEquals([
-                "one" => "true",
-                "two" => "intval(\$id)",
+                "one"   => "true",
+                "two"   => "intval(\$id)",
                 "three" => "123",
-                "four" => '"string"',
-                "five" => "null",
+                "four"  => "string",
+                "five"  => "null",
             ], $parser->getArguments());
         }
     }
@@ -235,7 +235,7 @@ class ExpressionTest extends TestCase
                 0 => "true",
                 1 => "intval(\$id)",
                 2 => "123",
-                3 => '"string"',
+                3 => "string",
                 4 => "null",
             ], $parser->getArguments());
         }
@@ -264,7 +264,7 @@ class ExpressionTest extends TestCase
             "one" => "true",
             "two" => "intval(\$id)",
             "three" => "123",
-            "four" => '"string"',
+            "four" => "string",
             "five" => "null",
         ], $parser->getArguments());
     }
@@ -284,9 +284,9 @@ class ExpressionTest extends TestCase
         $this->assertEquals('inline', $parser->getSourceExpression());
         $this->assertTrue(is_array($parser->getArguments()));
         $this->assertEquals([
-            "class" => '"btn btn-success disabled"',
-            "style" => '"color"',
-            "id" => '"meu-id-sobrescrito"',
+            "class" => 'btn btn-success disabled',
+            "style" => 'color',
+            "id"    => 'meu-id-sobrescrito',
         ], $parser->getArguments());
     }
 }

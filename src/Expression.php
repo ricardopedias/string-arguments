@@ -38,8 +38,8 @@ class Expression
     }
 
     /**
-     * Por padrão, quando um argumento é setado, ele sobrescreve o
-     * anterior de mesmo nome. Os valores de $arguments_names servem
+     * Por padrão, quando o método addArgument é invocado, ele sobrescreve o
+     * argumento anterior de mesmo nome. Os valores de $arguments_names servem
      * para mudar este comportamento.
      * Caso o nome passado se encontre em $arguments_names,
      * o argumento setado não sobrescreverá o anterior, mas será
@@ -59,12 +59,18 @@ class Expression
 
     /**
      * Adiciona um argumento para disponibilizar na lista de argumentos.
+     * O retorno é um array contendo duas chaves, onde os indices 'param' e 'value'
+     * contém, respectivamente os parâmetros já tratados do método addArgument().
+     * Se $force_override for setado como true, o comportamento de setAppendArgs
+     * será ignorado, sobrescrevendo o valor do argumento.
+     * @see StringArgs\Expression::setAppendArgs
      *
      * @param string  $param Nome da variável disponibilizada na view
-     * @param boolean $value Valor qualquer
-     * @return StringArgs\Expression
+     * @param mixed $value Valor qualquer
+     * @param bool $force_override
+     * @return array
      */
-    public function addArgument(string $param, $value = true)
+    public function addArgument(string $param, $value = true, $force_override = false)
     {
         $value = trim($value);      // remove espaços fora
         $value = trim($value, "'"); // remove aspas simples
@@ -76,23 +82,42 @@ class Expression
             $param = $this->default_arguments[$param];
         }
 
-        if (isset($this->append_arguments[$param]) && isset($this->arguments[$param])) {
-             // é um parâmetro anexável
+        if ($force_override == false
+         && isset($this->append_arguments[$param])
+         && isset($this->arguments[$param])
+        ) {
+             // é um parâmetro especial anexável
              $mixed = trim($this->arguments[$param], '"');
              $mixed .= " " . $value;
              $value = $mixed;
         }
 
-        if(preg_match('#[a-zA-Z] ?\(#', $value)) {
-            // função será renderizada para invocação na view
-        } elseif(!is_numeric($value) && !in_array($value, ['null', 'true', 'false'])) {
-            // strings serão escapadas com aspas duplas
-            $value = '"' . $value . '"';
-        }
-
         $this->arguments[$param] = $value;
 
-        return $this;
+        return [
+            'param' => $param,
+            'value' => $value
+        ];
+    }
+
+    /**
+     * Verifica se o argumento especificado existe.
+     *
+     * @return boolean
+     */
+    public function hasArgument($name)
+    {
+        return isset($this->arguments[$name]);
+    }
+
+    /**
+     * Devolve todos o argumento especificado.
+     *
+     * @return mixed|null
+     */
+    public function getArgument($name)
+    {
+        return $this->arguments[$name] ?? null;
     }
 
     /**
