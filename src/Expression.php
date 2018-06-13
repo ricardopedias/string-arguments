@@ -31,7 +31,7 @@ class Expression
      * @param array $arguments_names
      * @return StringArgs\Expression
      */
-    public function setDefaultArgs(array $arguments_names) : Expression
+    public function setDefaultArgs(array $arguments_names)
     {
         $this->default_arguments = $arguments_names;
         return $this;
@@ -51,7 +51,7 @@ class Expression
      * @param array $params
      * @return StringArgs\Expression
      */
-    public function setAppendArgs(array $arguments_names) : Expression
+    public function setAppendArgs(array $arguments_names)
     {
         $this->append_arguments = array_flip(array_unique($arguments_names));
         return $this;
