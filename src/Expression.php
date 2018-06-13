@@ -31,7 +31,7 @@ class Expression
      * @param array $arguments_names
      * @return StringArgs\Expression
      */
-    public function setDefaultArgs(array $arguments_names)
+    public function setDefaultArgs(array $arguments_names) : Expression
     {
         $this->default_arguments = $arguments_names;
         return $this;
@@ -51,7 +51,7 @@ class Expression
      * @param array $params
      * @return StringArgs\Expression
      */
-    public function setAppendArgs(array $arguments_names)
+    public function setAppendArgs(array $arguments_names) : Expression
     {
         $this->append_arguments = array_flip(array_unique($arguments_names));
         return $this;
@@ -70,7 +70,7 @@ class Expression
      * @param bool $force_override
      * @return array
      */
-    public function addArgument(string $param, $value = true, $force_override = false)
+    public function addArgument(string $param, $value = true, $force_override = false) : array
     {
         $value = trim($value);      // remove espaços fora
         $value = trim($value, "'"); // remove aspas simples
@@ -105,7 +105,7 @@ class Expression
      *
      * @return boolean
      */
-    public function hasArgument($name)
+    public function hasArgument($name) : bool
     {
         return isset($this->arguments[$name]);
     }
@@ -125,7 +125,7 @@ class Expression
      *
      * @return array
      */
-    public function getArguments()
+    public function getArguments() : array
     {
         return $this->arguments;
     }
@@ -140,7 +140,7 @@ class Expression
      * @param  string $expression
      * @return array
      */
-    public function parse(string $expression)
+    public function parse(string $expression) : array
     {
         if (empty($expression)) {
             $this->source_expression = 'none';
@@ -172,7 +172,14 @@ class Expression
         return $this->getArguments();
     }
 
-    protected function parseJsonArguments($expression)
+    /**
+     * Faz a análise de expressões no formato Json.
+     *
+     * @param  string $expression
+     * @throws \InvalidArgumentException
+     * @return array
+     */
+    protected function parseJsonArguments(string $expression) : array
     {
         // Prepara o json
         $expression = preg_replace('#\{\s*#','{', $expression);  // transoforma [ em { sem espaços
@@ -198,7 +205,14 @@ class Expression
         return $decoded;
     }
 
-    protected function parseArrayArguments($expression)
+    /**
+     * Faz a análise de expressões no formato Array.
+     *
+     * @param  string $expression
+     * @throws \InvalidArgumentException
+     * @return array
+     */
+    protected function parseArrayArguments(string $expression) : array
     {
         // Transforma o array em json
         $expression = preg_replace('#\[\s*?#','{', $expression);  // transoforma [ em { sem espaços
@@ -225,7 +239,16 @@ class Expression
         return $decoded;
     }
 
-    protected function parseInlineArguments($expression)
+    /**
+     * Faz a análise de expressões no formato inline.
+     * Como nos argumentos de funções:
+     *   minha_funcao (   $arg_one, $arg_two   );
+     * |____Função_____| |____Expressão____|
+     *
+     * @param  string $expression
+     * @return array
+     */
+    protected function parseInlineArguments(string $expression) : array
     {
         $splited = explode(',', $expression);
         $arguments = [];
