@@ -101,6 +101,21 @@ class Expression
     }
 
     /**
+     * Adiciona uma lista de argumentos.
+     *
+     * @param array $arguments
+     * @return StringArgs\Expression
+     */
+    public function addArguments(array $arguments)
+    {
+        foreach ($arguments as $param => $value) {
+            $this->addArgument($param, $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Verifica se o argumento especificado existe.
      *
      * @return boolean
