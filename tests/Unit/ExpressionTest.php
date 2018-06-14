@@ -238,6 +238,62 @@ class ExpressionTest extends TestCase
                 3 => "string",
                 4 => "null",
             ], $parser->getArguments());
+
+            $this->assertEquals('true', $parser->getArgument(0));
+            $this->assertEquals("intval(\$id)", $parser->getArgument(1));
+            $this->assertEquals("123", $parser->getArgument(2));
+            $this->assertEquals("string", $parser->getArgument(3));
+            $this->assertEquals("null", $parser->getArgument(4));
+        }
+
+    }
+
+    public function testParseInlineQuoteMargins()
+    {
+        $params = [
+            '"xxx", intval($id), 123, "string", "zzz"',
+            "'xxx', intval(\$id), 123, 'string', 'zzz'",
+            "
+                \"xxx\",
+                intval(\$id),
+                123,
+                \"string\",
+                \"zzz\"
+            ",
+            "
+                'xxx',
+                intval(\$id),
+                123,
+                'string',
+                'zzz'
+            "
+        ];
+
+        foreach ($params as $expression) {
+
+            $parser = new Expression;
+            $this->assertNull($parser->getSourceExpression());
+
+            $parser->parse($expression);
+
+            $this->assertEquals('inline', $parser->getSourceExpression());
+            $this->assertTrue(is_array($parser->getArguments()));
+
+            $this->assertCount(5, $parser->getArguments());
+
+            $this->assertEquals([
+                0 => "xxx",
+                1 => "intval(\$id)",
+                2 => "123",
+                3 => "string",
+                4 => "zzz",
+            ], $parser->getArguments());
+
+            $this->assertEquals('xxx', $parser->getArgument(0));
+            $this->assertEquals("intval(\$id)", $parser->getArgument(1));
+            $this->assertEquals("123", $parser->getArgument(2));
+            $this->assertEquals("string", $parser->getArgument(3));
+            $this->assertEquals("zzz", $parser->getArgument(4));
         }
     }
 
@@ -267,6 +323,12 @@ class ExpressionTest extends TestCase
             "four" => "string",
             "five" => "null",
         ], $parser->getArguments());
+
+        $this->assertEquals("true", $parser->getArgument('one'));
+        $this->assertEquals("intval(\$id)", $parser->getArgument('two'));
+        $this->assertEquals("123", $parser->getArgument('three'));
+        $this->assertEquals("string", $parser->getArgument('four'));
+        $this->assertEquals("null", $parser->getArgument('five'));
     }
 
     public function testAppendArguments()

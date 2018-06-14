@@ -72,10 +72,7 @@ class Expression
      */
     public function addArgument(string $param, $value = true, $force_override = false) : array
     {
-        $value = trim($value);      // remove espaços fora
-        $value = trim($value, "'"); // remove aspas simples
-        $value = trim($value, '"'); // remove aspas duplas
-        $value = trim($value);      // remove espaços dentro das aspas
+        $value = $this->sanitizeValue($value);
 
         if(is_numeric($param) && isset($this->default_arguments[$param])) {
             // Se for indice numérico e extistir um substituto
@@ -126,13 +123,16 @@ class Expression
     }
 
     /**
-     * Devolve todos o argumento especificado.
+     * Devolve o argumento especificado.
      *
      * @return mixed|null
      */
     public function getArgument($name)
     {
-        return $this->arguments[$name] ?? null;
+        if (isset($this->arguments[$name])) {
+            return $this->arguments[$name];
+        }
+        return null;
     }
 
     /**
@@ -143,6 +143,15 @@ class Expression
     public function getArguments() : array
     {
         return $this->arguments;
+    }
+
+    protected function sanitizeValue($value)
+    {
+        $value = trim($value);      // remove espaços fora
+        $value = trim($value, "'"); // remove aspas simples
+        $value = trim($value, '"'); // remove aspas duplas
+        $value = trim($value);      // remove espaços dentro das aspas
+        return $value;
     }
 
     /**
@@ -292,9 +301,7 @@ class Expression
                 continue;
 
             } else {
-                $part = trim($part);
-                $part = trim($part, '"');
-                $arguments[$current] = trim($part, "'");
+                $arguments[$current] = $part;
             }
             $current++;
         }
